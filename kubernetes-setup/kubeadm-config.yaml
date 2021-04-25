@@ -1,0 +1,42 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: v1.18.15
+certificatesDir: /etc/kubernetes/pki
+clusterName: vagrant
+controlPlaneEndpoint: ""
+imageRepository: k8s.gcr.io
+networking:
+  dnsDomain: cluster.local
+  serviceSubnet: 10.96.0.0/12
+  ## for flannel
+  podSubnet: 10.244.0.0/16
+dns:
+  type: CoreDNS
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+apiServer:
+#  timeoutForControlPlane: 4m0s
+  certSANs:
+  - 127.0.0.1
+  - 192.168.50.10
+  - master-1
+  extraArgs:
+    advertise-address: "192.168.50.10"
+    secure-port: "6443"
+    authorization-mode: Node,RBAC
+    enable-admission-plugins: NodeRestriction
+    allow-privileged: "true"
+    kubelet-preferred-address-types: InternalIP,ExternalIP,Hostname
+scheduler:
+  extraArgs:
+    address: 0.0.0.0
+#    port: "10251"
+#    secure-port: "10259"
+controllerManager:
+  extraArgs:
+    bind-address: 0.0.0.0
+#    secure-port: "10257"
+#    address: 0.0.0.0
+#    port: "10252"
+
